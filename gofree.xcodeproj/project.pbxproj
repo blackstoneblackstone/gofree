@@ -78,6 +78,7 @@
 		997B13E682EF8988107E0642 /* YaoStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BC465FC8F23FCBC34CC9C40 /* YaoStack.swift */; };
 		9AAE03BD2075EABCAC9308F3 /* ExpandedCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31D2743F93DABF00CC316E35 /* ExpandedCalendarView.swift */; };
 		9F27FABECDB6004EB8C14DC8 /* LunarMonth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2679B1462BCBEDA8C9CEA3AC /* LunarMonth.swift */; };
+		A1EEF5A554A0066563035A02 /* divine-ritual.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 58BFC77A0952BFA267BB76FF /* divine-ritual.usdz */; };
 		A21A9CA16BF479699CC981E8 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234F329DEF0599D3D1FFCF60 /* WeatherService.swift */; };
 		A7895AFB9F62CD3AD0C0EF4C /* Hairline.swift in Sources */ = {isa = PBXBuildFile; fileRef = E46CB629A7545EED42E1B1C0 /* Hairline.swift */; };
 		A9F2B1B7B8D38A00F1A24FCF /* DivinationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 174AE5AC53FC9D717C8F21E5 /* DivinationResult.swift */; };
@@ -96,6 +97,7 @@
 		CECB93FBAC40F2F02ADEA9AA /* LiuYue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6902C5E7C1D296125CD71E0 /* LiuYue.swift */; };
 		D4090383F673C6C9DF254EEB /* AppPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66EC4965D9FE1760365F2951 /* AppPaths.swift */; };
 		D7064783E1FB5D3DC27A68DB /* RestPopupWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFCBF6B95151AF726E26F2A4 /* RestPopupWindow.swift */; };
+		D7ACAB8FB962A09EEA80796B /* divine-casting.usdz in Resources */ = {isa = PBXBuildFile; fileRef = ABC3803B3C3120CA6B2D28F5 /* divine-casting.usdz */; };
 		D7F02B5E0CC939AADCE08B37 /* low-energy-camouflage.usdz in Resources */ = {isa = PBXBuildFile; fileRef = A2366E306EAF22CD9529D01A /* low-energy-camouflage.usdz */; };
 		D921CCF1821C0A8F16783CEC /* stairwell-or-downstairs.usdz in Resources */ = {isa = PBXBuildFile; fileRef = CB8D992240C5EAE5EE3E19B1 /* stairwell-or-downstairs.usdz */; };
 		D9F88C01E14AA1E517F2163D /* TaoUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76E8F13452E9B517B37E5EE0 /* TaoUtil.swift */; };
@@ -106,6 +108,7 @@
 		E8ADDC715AC3FBE74A8C2015 /* chin-rest.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 065CB6860420A16FD5C510A0 /* chin-rest.usdz */; };
 		EF0A63EA28641FD74CF225F8 /* FlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3F44F516BC8AD255E96215E0 /* FlowLayout.swift */; };
 		EF65E366AB476E6E33E4D0A9 /* DivinationInterpreter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A341708DF253D71CCC4EB20F /* DivinationInterpreter.swift */; };
+		EFA2E4F69259208E4073F264 /* divine-idle.usdz in Resources */ = {isa = PBXBuildFile; fileRef = 22AC3DC83CCB25FEA8479298 /* divine-idle.usdz */; };
 		F34005A07EEFAF1DF572DF3C /* SettingsWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = DFF4AFA7041EEB980DA2EA44 /* SettingsWindow.swift */; };
 		F95CF57DF232E571FD635E5E /* DivinationJournal.swift in Sources */ = {isa = PBXBuildFile; fileRef = B8CD8B2E82D7CC3C13634CB3 /* DivinationJournal.swift */; };
 		F9FF1095932D240DBFDCB3D2 /* RestWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D33FF6E38022FC5563957D40 /* RestWindow.swift */; };
@@ -124,6 +127,7 @@
 		1ADE25B815A8BAB0A132578A /* StarRating.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarRating.swift; sourceTree = "<group>"; };
 		1CDF8684F1465F4CFE4E5DD5 /* Tao.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tao.swift; sourceTree = "<group>"; };
 		1F816D9B5B7597C73CD16D42 /* gofree.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = gofree.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		22AC3DC83CCB25FEA8479298 /* divine-idle.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = "divine-idle.usdz"; sourceTree = "<group>"; };
 		234F329DEF0599D3D1FFCF60 /* WeatherService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherService.swift; sourceTree = "<group>"; };
 		2679B1462BCBEDA8C9CEA3AC /* LunarMonth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LunarMonth.swift; sourceTree = "<group>"; };
 		26BAAD6D4446F09B12980220 /* afternoon-emergency.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = "afternoon-emergency.usdz"; sourceTree = "<group>"; };
@@ -146,6 +150,7 @@
 		563A29B76FE53B47CB6DD6D5 /* LiuNian.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiuNian.swift; sourceTree = "<group>"; };
 		57186FEBE280AAE070FA3B49 /* ShuJiu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuJiu.swift; sourceTree = "<group>"; };
 		57A0A19B555156182988F792 /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
+		58BFC77A0952BFA267BB76FF /* divine-ritual.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = "divine-ritual.usdz"; sourceTree = "<group>"; };
 		5A790B91E2AC6F08E11C920F /* Hexagram.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Hexagram.swift; sourceTree = "<group>"; };
 		5BC465FC8F23FCBC34CC9C40 /* YaoStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YaoStack.swift; sourceTree = "<group>"; };
 		5D30D21C428C83B8B1F0A782 /* Holidays.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Holidays.json; sourceTree = "<group>"; };
@@ -178,6 +183,7 @@
 		A6B9FC3687502C9921A84FF9 /* CalendarService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarService.swift; sourceTree = "<group>"; };
 		A8BFCE58D54491435DED8F08 /* DivinerSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DivinerSceneView.swift; sourceTree = "<group>"; };
 		AA79BA98DC7ECB7FC2120F18 /* Holiday.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Holiday.swift; sourceTree = "<group>"; };
+		ABC3803B3C3120CA6B2D28F5 /* divine-casting.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = "divine-casting.usdz"; sourceTree = "<group>"; };
 		AC7B7CCF287AA97CC9FA1CEB /* Verdict.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Verdict.swift; sourceTree = "<group>"; };
 		AEAB1236A262EF925FF3E515 /* CoinLine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinLine.swift; sourceTree = "<group>"; };
 		AF7808B1B9AC5494614ED9F5 /* DivinationMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DivinationMethod.swift; sourceTree = "<group>"; };
@@ -252,6 +258,7 @@
 		13187FBD89EC72C6B4E20B08 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5B09F9BA157300310E3DBF71 /* DivineModels */,
 				D1AC7798C36B647E0631383B /* RestModels */,
 				5D30D21C428C83B8B1F0A782 /* Holidays.json */,
 				106D939C56D8B83056BC29AD /* iching.json */,
@@ -266,6 +273,16 @@
 				D3227997FB509AF403FD2106 /* LunarSwift */,
 			);
 			path = Vendor;
+			sourceTree = "<group>";
+		};
+		5B09F9BA157300310E3DBF71 /* DivineModels */ = {
+			isa = PBXGroup;
+			children = (
+				ABC3803B3C3120CA6B2D28F5 /* divine-casting.usdz */,
+				22AC3DC83CCB25FEA8479298 /* divine-idle.usdz */,
+				58BFC77A0952BFA267BB76FF /* divine-ritual.usdz */,
+			);
+			path = DivineModels;
 			sourceTree = "<group>";
 		};
 		7FDD39C820798017804D2F45 /* Sources */ = {
@@ -460,6 +477,9 @@
 				64D250F98687B073C4991AB3 /* afternoon-emergency.usdz in Resources */,
 				2352965D8606C62E4B17632E /* ambient-noise.usdz in Resources */,
 				E8ADDC715AC3FBE74A8C2015 /* chin-rest.usdz in Resources */,
+				D7ACAB8FB962A09EEA80796B /* divine-casting.usdz in Resources */,
+				EFA2E4F69259208E4073F264 /* divine-idle.usdz in Resources */,
+				A1EEF5A554A0066563035A02 /* divine-ritual.usdz in Resources */,
 				0B5CE54F5AE62A69A530C737 /* iching.json in Resources */,
 				D7F02B5E0CC939AADCE08B37 /* low-energy-camouflage.usdz in Resources */,
 				DD6C8BB217CDA5D36D6900D2 /* restroom-no-phone.usdz in Resources */,

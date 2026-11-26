@@ -1,16 +1,18 @@
+import AppKit
+import SceneKit
 import SwiftUI
 
 /// 起卦动效所处的仪节阶段。
 enum DivinerPhase: Equatable {
-    /// 未起卦：柔和呼吸与 3D 轨道缓转
+    /// 未起卦：现代八卦浑天仪缓转
     case idle
-    /// 起卦前第一步：净手澄心（深呼吸节奏）
+    /// 起卦前第一步：净手澄心（四十九策聚光呼吸）
     case cleanse
     /// 起卦前第二步：专念一事（凝神聚焦）
     case focus
     /// 起卦前第三步：合策默祷（四十九策聚光）
     case pray
-    /// 起卦中：分二挂一，三变成爻
+    /// 起卦中：三枚外圆内方古铜钱动态起卦
     case casting
 
     var symbolName: String {
@@ -43,193 +45,236 @@ enum DivinerPhase: Equatable {
         }
     }
 
-    var orbitSpeed: Double {
+    /// 对应的 Blender .usdz 3D 模型文件名
+    var modelName: String {
         switch self {
-        case .idle: return 0.35
-        case .cleanse: return 0.32
-        case .focus: return 0.55
-        case .pray: return 0.72
-        case .casting: return 1.85
+        case .idle, .focus: return "divine-idle"
+        case .cleanse, .pray: return "divine-ritual"
+        case .casting: return "divine-casting"
         }
     }
 }
 
-/// 现代 3D 透视流体星环 + 四十九策光束动效：自适应容器尺寸，可作主视觉中心或侧栏动效。
+/// 「占一事」Blender 5.3 真 3D（.usdz）仪轨动效舞台：
+/// 随起卦阶段自动切换八卦浑天仪、四十九策聚光仪、三枚古铜钱起卦 3D 模型，支持鼠标拖拽旋转。
 struct DivinerSceneView: View {
     let phase: DivinerPhase
     var showsBadge: Bool = true
-    @State private var hovering = false
 
     var body: some View {
-        GeometryReader { geo in
-            let side = min(geo.size.width, geo.size.height)
-            let scale = max(0.75, side / 184)
+        VStack(spacing: 0) {
+            ZStack {
+                RadialGradient(
+                    colors: [
+                        phase.tint.opacity(0.18),
+                        phase.tint.opacity(0.04),
+                        .clear
+                    ],
+                    center: UnitPoint(x: 0.5, y: 0.48),
+                    startRadius: 8,
+                    endRadius: 120
+                )
 
-            TimelineView(.animation(minimumInterval: 1.0 / 60.0)) { context in
-                let t = context.date.timeIntervalSinceReferenceDate
-                let speed = phase.orbitSpeed
-                // 净手澄心时放慢到 3.5 秒一次深呼吸
-                let breathFreq: Double = phase == .cleanse ? 1.8 : (phase == .casting ? 4.0 : 1.5)
-                let pulse = 0.5 + 0.5 * sin(t * breathFreq)
+                DivineUSDZViewRepresentable(modelName: phase.modelName)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                ZStack {
-                    // 1. 柔和多层环境呼吸光晕
-                    Circle()
-                        .fill(
-                            RadialGradient(
-                                colors: [
-                                    phase.tint.opacity(0.26 + 0.14 * pulse),
-                                    phase.tint.opacity(0.08),
-                                    .clear
-                                ],
-                                center: .center,
-                                startRadius: 10 * scale,
-                                endRadius: 84 * scale
-                            )
-                        )
-                        .scaleEffect(0.90 + 0.14 * pulse)
-
-                    // 2. 四十九策微光射线（呼应大衍五十、其用四十九）
-                    Canvas { ctx, size in
-                        let center = CGPoint(x: size.width / 2, y: size.height / 2)
-                        let innerR = 42 * scale + (phase == .cleanse ? 6 * pulse * scale : 0)
-                        let baseOuter = (phase == .pray ? 76 : 68) * scale
-                        let count = 49
-                        let rotation = t * 0.18 * speed
-                        for i in 0..<count {
-                            let angle = (Double(i) / Double(count)) * .pi * 2 + rotation
-                            let wave = 0.5 + 0.5 * sin(Double(i) * 0.65 - t * 2.4)
-                            let outerR = baseOuter + CGFloat(wave) * 10 * scale
-                            var path = Path()
-                            path.move(to: CGPoint(
-                                x: center.x + cos(angle) * innerR,
-                                y: center.y + sin(angle) * innerR
-                            ))
-                            path.addLine(to: CGPoint(
-                                x: center.x + cos(angle) * outerR,
-                                y: center.y + sin(angle) * outerR
-                            ))
-                            ctx.stroke(
-                                path,
-                                with: .color(phase.tint.opacity(0.10 + 0.20 * wave)),
-                                style: StrokeStyle(lineWidth: 1.1 * scale, lineCap: .round)
-                            )
-                        }
-                    }
-
-                    // 3. 外层 3D 倾斜轨道环 1
-                    orbitRing(
-                        diameter: 136 * scale,
-                        angle: t * 32 * speed,
-                        tiltX: 62,
-                        tiltY: 18,
-                        lineWidth: 1.5 * scale,
-                        opacity: 0.48,
-                        dotSize: 6 * scale
-                    )
-
-                    // 4. 中层 3D 倾斜轨道环 2（反向旋转）
-                    orbitRing(
-                        diameter: 110 * scale,
-                        angle: -t * 46 * speed + 90,
-                        tiltX: 54,
-                        tiltY: -34,
-                        lineWidth: 1.25 * scale,
-                        opacity: 0.36,
-                        dotSize: 5 * scale
-                    )
-
-                    // 5. 内层律动虚线环
-                    Circle()
-                        .stroke(
-                            phase.tint.opacity(0.28),
-                            style: StrokeStyle(lineWidth: 1.3 * scale, lineCap: .round, dash: [3 * scale, 6 * scale])
-                        )
-                        .frame(width: 82 * scale, height: 82 * scale)
-                        .rotationEffect(.degrees(t * 20 * speed))
-
-                    // 6. 中心玻璃态核心 + 随阶段切换的 SF Symbol
-                    ZStack {
-                        Circle()
-                            .fill(Theme.divineCard)
-                            .frame(width: 58 * scale, height: 58 * scale)
-                            .shadow(color: phase.tint.opacity(0.26), radius: 16 * scale, y: 4 * scale)
-                            .overlay {
-                                Circle()
-                                    .strokeBorder(phase.tint.opacity(0.36), lineWidth: 1.2)
-                            }
-
-                        Image(systemName: phase.symbolName)
-                            .font(.system(size: 24 * scale, weight: .semibold))
-                            .symbolRenderingMode(.hierarchical)
-                            .foregroundStyle(phase.tint)
-                            .contentTransition(.symbolEffect(.replace))
-                            .scaleEffect(hovering ? 1.08 : (0.96 + 0.08 * pulse))
-                    }
-                    .offset(y: sin(t * 1.9) * 3 * scale)
-
-                    // 7. 底部状态胶囊（可选）
-                    if showsBadge {
-                        VStack {
-                            Spacer()
-                            Text(phase.badgeTitle)
-                                .font(.system(size: 10, weight: .semibold))
-                                .foregroundStyle(phase.tint)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 3)
-                                .background {
-                                    Capsule(style: .continuous)
-                                        .fill(Theme.divineCard.opacity(0.92))
-                                        .shadow(color: .black.opacity(0.05), radius: 4, y: 1)
-                                }
-                                .overlay {
-                                    Capsule(style: .continuous)
-                                        .strokeBorder(phase.tint.opacity(0.22), lineWidth: 0.6)
-                                }
-                                .padding(.bottom, 10)
-                        }
-                    }
+            if showsBadge {
+                HStack(spacing: 5) {
+                    Image(systemName: phase.symbolName)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(phase.tint)
+                    Text(phase.badgeTitle)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(Color.primary)
                 }
-                .frame(width: geo.size.width, height: geo.size.height)
-                .animation(.spring(response: 0.45, dampingFraction: 0.78), value: phase)
+                .frame(maxWidth: .infinity)
+                .frame(height: 26)
+                .background(Theme.divineCard.opacity(0.75))
+                .overlay(alignment: .top) {
+                    Hairline()
+                }
             }
         }
-        .onHover { hovering = $0 }
+        .animation(.easeInOut(duration: 0.28), value: phase)
+    }
+}
+
+// MARK: - SceneKit USDZ Loader
+
+private struct DivineUSDZViewRepresentable: NSViewRepresentable {
+    let modelName: String
+
+    final class Coordinator {
+        var currentModelName: String = ""
     }
 
-    private func orbitRing(
-        diameter: CGFloat,
-        angle: Double,
-        tiltX: Double,
-        tiltY: Double,
-        lineWidth: CGFloat,
-        opacity: Double,
-        dotSize: CGFloat
-    ) -> some View {
-        ZStack {
-            Circle()
-                .strokeBorder(
-                    AngularGradient(
-                        colors: [
-                            phase.tint.opacity(opacity),
-                            phase.tint.opacity(0.06),
-                            phase.tint.opacity(opacity * 0.7),
-                            phase.tint.opacity(0.06),
-                            phase.tint.opacity(opacity)
-                        ],
-                        center: .center
-                    ),
-                    lineWidth: lineWidth
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
+
+    func makeNSView(context: Context) -> SCNView {
+        let view = SCNView(frame: .zero)
+        view.backgroundColor = .clear
+        view.antialiasingMode = .multisampling4X
+        view.autoenablesDefaultLighting = false
+        view.allowsCameraControl = true
+        view.defaultCameraController.interactionMode = .orbitTurntable
+        view.defaultCameraController.inertiaEnabled = true
+        view.isPlaying = true
+        view.loops = true
+        context.coordinator.currentModelName = modelName
+        view.scene = DivineUSDZLoader.loadScene(named: modelName)
+        return view
+    }
+
+    func updateNSView(_ nsView: SCNView, context: Context) {
+        guard context.coordinator.currentModelName != modelName else { return }
+        context.coordinator.currentModelName = modelName
+        nsView.scene = DivineUSDZLoader.loadScene(named: modelName)
+        nsView.isPlaying = true
+    }
+}
+
+private enum DivineUSDZLoader {
+
+    private static let studioEnvironmentImage: NSImage = {
+        let size = NSSize(width: 256, height: 128)
+        let image = NSImage(size: size)
+        image.lockFocus()
+        if let ctx = NSGraphicsContext.current?.cgContext {
+            let colors = [
+                NSColor(srgbRed: 0.16, green: 0.20, blue: 0.28, alpha: 1).cgColor,
+                NSColor(srgbRed: 0.64, green: 0.74, blue: 0.88, alpha: 1).cgColor,
+                NSColor(srgbRed: 0.98, green: 0.96, blue: 0.92, alpha: 1).cgColor,
+                NSColor(srgbRed: 1.00, green: 0.99, blue: 0.97, alpha: 1).cgColor
+            ] as CFArray
+            let locations: [CGFloat] = [0.0, 0.40, 0.75, 1.0]
+            if let grad = CGGradient(colorsSpace: CGColorSpaceCreateDeviceRGB(), colors: colors, locations: locations) {
+                ctx.drawLinearGradient(
+                    grad,
+                    start: CGPoint(x: 0, y: 0),
+                    end: CGPoint(x: 0, y: size.height),
+                    options: []
                 )
-            Circle()
-                .fill(phase.tint)
-                .frame(width: dotSize, height: dotSize)
-                .shadow(color: phase.tint.opacity(0.65), radius: 4)
-                .offset(x: diameter / 2)
+            }
         }
-        .frame(width: diameter, height: diameter)
-        .rotationEffect(.degrees(angle))
-        .rotation3DEffect(.degrees(tiltX), axis: (x: 1, y: 0, z: 0), perspective: 0.55)
-        .rotation3DEffect(.degrees(tiltY), axis: (x: 0, y: 1, z: 0), perspective: 0.55)
+        image.unlockFocus()
+        return image
+    }()
+
+    static func loadScene(named modelName: String) -> SCNScene {
+        let scene = SCNScene()
+        scene.background.contents = NSColor.clear
+        scene.lightingEnvironment.contents = studioEnvironmentImage
+        scene.lightingEnvironment.intensity = 0.36
+
+        let stage = SCNNode()
+        scene.rootNode.addChildNode(stage)
+
+        let url = Bundle.main.url(forResource: modelName, withExtension: "usdz", subdirectory: "DivineModels")
+            ?? Bundle.main.url(forResource: modelName, withExtension: "usdz")
+
+        if let url, let loaded = try? SCNScene(url: url, options: [
+            .checkConsistency: false,
+            .flattenScene: false
+        ]) {
+            let modelRoot = SCNNode()
+            for child in loaded.rootNode.childNodes {
+                modelRoot.addChildNode(child)
+            }
+            enableLoopingAnimations(in: modelRoot)
+
+            let (minB, maxB) = modelRoot.boundingBox
+            let center = SCNVector3(
+                (minB.x + maxB.x) * 0.5,
+                (minB.y + maxB.y) * 0.5,
+                (minB.z + maxB.z) * 0.5
+            )
+            let size = SCNVector3(
+                max(0.01, maxB.x - minB.x),
+                max(0.01, maxB.y - minB.y),
+                max(0.01, maxB.z - minB.z)
+            )
+            let maxDim = max(size.x, max(size.y, size.z))
+            let fitScale = CGFloat(2.45 / maxDim)
+            modelRoot.scale = SCNVector3(fitScale, fitScale, fitScale)
+            modelRoot.position = SCNVector3(
+                -center.x * fitScale,
+                -center.y * fitScale,
+                -center.z * fitScale
+            )
+            stage.addChildNode(modelRoot)
+        }
+
+        // 柔和展示台微幅摇摆
+        let swayLeft = SCNAction.rotateTo(x: 0.02, y: -0.22, z: 0, duration: 4.2)
+        swayLeft.timingMode = .easeInEaseOut
+        let swayRight = SCNAction.rotateTo(x: -0.02, y: 0.22, z: 0, duration: 4.2)
+        swayRight.timingMode = .easeInEaseOut
+        stage.runAction(.repeatForever(.sequence([swayLeft, swayRight])))
+
+        setupLighting(in: scene)
+        setupCamera(in: scene)
+        return scene
+    }
+
+    private static func enableLoopingAnimations(in node: SCNNode) {
+        for key in node.animationKeys {
+            if let player = node.animationPlayer(forKey: key) {
+                player.animation.repeatCount = .greatestFiniteMagnitude
+                player.animation.isRemovedOnCompletion = false
+                player.play()
+            }
+        }
+        for child in node.childNodes {
+            enableLoopingAnimations(in: child)
+        }
+    }
+
+    private static func setupLighting(in scene: SCNScene) {
+        let key = SCNNode()
+        key.light = SCNLight()
+        key.light?.type = .spot
+        key.light?.intensity = 520
+        key.light?.color = NSColor(srgbRed: 1.0, green: 0.96, blue: 0.91, alpha: 1)
+        key.light?.spotInnerAngle = 35
+        key.light?.spotOuterAngle = 72
+        key.light?.castsShadow = true
+        key.light?.shadowMode = .deferred
+        key.light?.shadowRadius = 7.0
+        key.light?.shadowSampleCount = 16
+        key.light?.shadowMapSize = CGSize(width: 1024, height: 1024)
+        key.light?.shadowColor = NSColor(srgbRed: 0.05, green: 0.08, blue: 0.16, alpha: 0.26)
+        key.position = SCNVector3(2.8, 4.2, 3.6)
+        key.look(at: SCNVector3(0, 0, 0))
+        scene.rootNode.addChildNode(key)
+
+        let fill = SCNNode()
+        fill.light = SCNLight()
+        fill.light?.type = .directional
+        fill.light?.intensity = 180
+        fill.light?.color = NSColor(srgbRed: 0.78, green: 0.88, blue: 1.0, alpha: 1)
+        fill.eulerAngles = SCNVector3(-0.35, -0.95, 0)
+        scene.rootNode.addChildNode(fill)
+
+        let rim = SCNNode()
+        rim.light = SCNLight()
+        rim.light?.type = .directional
+        rim.light?.intensity = 220
+        rim.light?.color = NSColor(srgbRed: 0.92, green: 0.96, blue: 1.0, alpha: 1)
+        rim.eulerAngles = SCNVector3(0.45, -2.55, 0)
+        scene.rootNode.addChildNode(rim)
+    }
+
+    private static func setupCamera(in scene: SCNScene) {
+        let cameraNode = SCNNode()
+        let cam = SCNCamera()
+        cam.fieldOfView = 32
+        cam.wantsHDR = false
+        cameraNode.camera = cam
+        cameraNode.position = SCNVector3(0, 1.35, 4.75)
+        cameraNode.look(at: SCNVector3(0, 0, 0))
+        scene.rootNode.addChildNode(cameraNode)
     }
 }
