@@ -20,9 +20,7 @@
 `gofree` 是一款纯原生 SwiftUI 打造的 macOS 菜单栏应用（无 Electron，支持浅色 / 深色模式自适应）。点开菜单栏即可一屏看完 **农历黄历、法定休班、实时天气、美股财报与宏观数据**，并内置以 **《高岛易断》** 为核心的「占一事」易占与 AI 解卦功能，以及带 **Blender 3D 动作演示与分步倒计时** 的「定时休息提醒」。
 
 <p align="center">
-  <img src="design/preview.png" width="320" alt="菜单栏日历预览" />
-  &nbsp;&nbsp;&nbsp;
-  <img src="design/preview-divine.png" width="560" alt="高岛易断占一事预览" />
+  <img src="design/feature-hero-16x9.png" width="880" alt="gofree 全功能总览（真实界面）" />
 </p>
 
 ## 功能亮点
