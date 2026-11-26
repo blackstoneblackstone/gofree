@@ -43,6 +43,8 @@ enum ExpandedWindow {
             if window === self.window { continue }
             if SettingsWindow.isSettingsWindow(window) { continue }
             if DivinationWindow.isDivinationWindow(window) { continue }
+            if RestWindow.isRestWindow(window) { continue }
+            if RestPopupWindow.isPopupWindow(window) { continue }
             window.orderOut(nil)
         }
     }

@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// 现代图标功能条：占一卦、两月视图、刷新、设置，带分色图标与悬停微弹动效。
+/// 现代图标功能条：占一卦、歇一下、两月视图、刷新、设置，带分色图标与悬停微弹动效。
 struct ActionBar: View {
     var onDivination: () -> Void
+    var onRest: () -> Void
     var onExpanded: () -> Void
     var onRefresh: () -> Void
     var onSettings: () -> Void
@@ -10,7 +11,8 @@ struct ActionBar: View {
     var body: some View {
         HStack(spacing: 6) {
             ActionBarItem(title: "占一卦", systemName: "sparkles", tint: Theme.accent, action: onDivination)
-            ActionBarItem(title: "两月", systemName: "calendar.day.timeline.left", tint: Theme.jieqi, action: onExpanded)
+            ActionBarItem(title: "歇一下", systemName: "cup.and.saucer.fill", tint: Theme.jieqi, action: onRest)
+            ActionBarItem(title: "两月", systemName: "calendar.day.timeline.left", tint: Theme.work, action: onExpanded)
             ActionBarItem(title: "刷新", systemName: "arrow.clockwise", tint: Theme.earnings, action: onRefresh)
             ActionBarItem(title: "设置", systemName: "gearshape.fill", tint: Theme.textSecondary, action: onSettings)
         }

@@ -84,6 +84,91 @@ struct SettingsView: View {
                 .padding(.horizontal, 14)
                 .padding(.top, 8)
 
+            Text("定时休息")
+                .font(.system(size: 11, weight: .semibold))
+                .foregroundStyle(Theme.textTertiary)
+                .padding(.horizontal, 14)
+                .padding(.top, 10)
+                .padding(.bottom, 4)
+
+            row(
+                title: "启用定时休息提醒",
+                subtitle: "右上角轻浮窗提醒：留在工位隐形休息 / 离开工位断电 3 分钟",
+                isOn: $settings.restReminderEnabled
+            )
+
+            if settings.restReminderEnabled {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack(spacing: 8) {
+                        Text("提醒间隔")
+                            .font(.system(size: 10))
+                            .foregroundStyle(Theme.textTertiary)
+                            .frame(width: 54, alignment: .leading)
+                        Picker("", selection: $settings.restIntervalMinutes) {
+                            ForEach([20, 30, 45, 60, 90], id: \.self) { mins in
+                                Text("\(mins) 分钟").tag(mins)
+                            }
+                        }
+                        .labelsHidden()
+                        .controlSize(.small)
+                        .frame(width: 96)
+
+                        Spacer(minLength: 4)
+
+                        Button("立即提醒") {
+                            RestReminderManager.shared.triggerNow()
+                        }
+                        .buttonStyle(.plain)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Theme.accent)
+                        .pointerCursor()
+
+                        Button("休息指南") {
+                            RestWindow.open()
+                        }
+                        .buttonStyle(.plain)
+                        .font(.system(size: 10, weight: .medium))
+                        .foregroundStyle(Theme.jieqi)
+                        .pointerCursor()
+                    }
+
+                    Picker("", selection: $settings.restMode) {
+                        ForEach(RestMode.allCases) { mode in
+                            Text(mode.label).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    .labelsHidden()
+                    .controlSize(.small)
+
+                    HStack(spacing: 12) {
+                        Toggle("投屏时不弹出", isOn: $settings.restSuppressWhenCasting)
+                            .toggleStyle(.checkbox)
+                            .controlSize(.small)
+                            .font(.system(size: 10))
+                            .foregroundStyle(Theme.textSecondary)
+
+                        Toggle("仅工作时段 (9–19点)", isOn: $settings.restWorkHoursOnly)
+                            .toggleStyle(.checkbox)
+                            .controlSize(.small)
+                            .font(.system(size: 10))
+                            .foregroundStyle(Theme.textSecondary)
+
+                        Toggle("提示音", isOn: $settings.restSoundEnabled)
+                            .toggleStyle(.checkbox)
+                            .controlSize(.small)
+                            .font(.system(size: 10))
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                }
+                .padding(.horizontal, 14)
+                .padding(.bottom, 8)
+            }
+
+            Divider()
+                .padding(.horizontal, 14)
+                .padding(.top, 8)
+
             Text("大模型")
                 .font(.system(size: 11, weight: .semibold))
                 .foregroundStyle(Theme.textTertiary)

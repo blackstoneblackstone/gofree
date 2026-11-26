@@ -70,6 +70,43 @@ final class AppSettings {
         didSet { defaults.set(llmModel, forKey: Key.llmModel) }
     }
 
+    /// 定时休息提醒
+    var restReminderEnabled: Bool {
+        didSet {
+            defaults.set(restReminderEnabled, forKey: Key.restReminderEnabled)
+            RestReminderManager.shared.reschedule()
+        }
+    }
+
+    var restIntervalMinutes: Int {
+        didSet {
+            defaults.set(restIntervalMinutes, forKey: Key.restIntervalMinutes)
+            RestReminderManager.shared.reschedule()
+        }
+    }
+
+    var restMode: RestMode {
+        didSet {
+            defaults.set(restMode.rawValue, forKey: Key.restMode)
+        }
+    }
+
+    var restWorkHoursOnly: Bool {
+        didSet {
+            defaults.set(restWorkHoursOnly, forKey: Key.restWorkHoursOnly)
+            RestReminderManager.shared.reschedule()
+        }
+    }
+
+    var restSoundEnabled: Bool {
+        didSet { defaults.set(restSoundEnabled, forKey: Key.restSoundEnabled) }
+    }
+
+    /// 投屏 / 镜像 / 共享屏幕 / 全屏演示时自动静默，不弹出浮窗
+    var restSuppressWhenCasting: Bool {
+        didSet { defaults.set(restSuppressWhenCasting, forKey: Key.restSuppressWhenCasting) }
+    }
+
     static func apply(_ appearance: Appearance) {
         let app = NSApplication.shared
         switch appearance {
@@ -90,6 +127,12 @@ final class AppSettings {
         static let llmEnabled = "llmEnabled"
         static let llmBaseURL = "llmBaseURL"
         static let llmModel = "llmModel"
+        static let restReminderEnabled = "restReminderEnabled"
+        static let restIntervalMinutes = "restIntervalMinutes"
+        static let restMode = "restMode"
+        static let restWorkHoursOnly = "restWorkHoursOnly"
+        static let restSoundEnabled = "restSoundEnabled"
+        static let restSuppressWhenCasting = "restSuppressWhenCasting"
     }
 
     /// 测试/截图时可以指到别的 suite，保证不会动到用户真实的设置。
@@ -114,6 +157,12 @@ final class AppSettings {
             Key.llmEnabled: false,
             Key.llmBaseURL: "https://api.openai.com/v1",
             Key.llmModel: "gpt-4o-mini",
+            Key.restReminderEnabled: true,
+            Key.restIntervalMinutes: 45,
+            Key.restMode: RestMode.smart.rawValue,
+            Key.restWorkHoursOnly: false,
+            Key.restSoundEnabled: true,
+            Key.restSuppressWhenCasting: true,
         ])
         showsUSMarket = defaults.bool(forKey: Key.usMarket)
         showsHolidayCountdown = defaults.bool(forKey: Key.holidayCountdown)
@@ -127,5 +176,12 @@ final class AppSettings {
         llmEnabled = defaults.bool(forKey: Key.llmEnabled)
         llmBaseURL = defaults.string(forKey: Key.llmBaseURL) ?? "https://api.openai.com/v1"
         llmModel = defaults.string(forKey: Key.llmModel) ?? "gpt-4o-mini"
+        restReminderEnabled = defaults.bool(forKey: Key.restReminderEnabled)
+        let savedInterval = defaults.integer(forKey: Key.restIntervalMinutes)
+        restIntervalMinutes = savedInterval > 0 ? savedInterval : 45
+        restMode = RestMode(rawValue: defaults.string(forKey: Key.restMode) ?? "") ?? .smart
+        restWorkHoursOnly = defaults.bool(forKey: Key.restWorkHoursOnly)
+        restSoundEnabled = defaults.bool(forKey: Key.restSoundEnabled)
+        restSuppressWhenCasting = defaults.bool(forKey: Key.restSuppressWhenCasting)
     }
 }

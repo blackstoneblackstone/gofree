@@ -9,6 +9,7 @@ struct PopoverView: View {
 
     @State private var marketStore = MarketStore()
     private let settings = AppSettings.shared
+    private let restManager = RestReminderManager.shared
     @State private var weatherStore = WeatherStore()
 
 
@@ -44,8 +45,15 @@ struct PopoverView: View {
                 .padding(.top, 8)
             }
 
+            if settings.restReminderEnabled || restManager.activeSession != nil {
+                RestLine(manager: restManager, onOpen: { RestWindow.open() })
+                    .padding(.horizontal, 14)
+                    .padding(.top, 8)
+            }
+
             ActionBar(
                 onDivination: { DivinationWindow.open() },
+                onRest: { RestWindow.open() },
                 onExpanded: { ExpandedWindow.open(store: store, calendarService: calendarService) },
                 onRefresh: { store.reload() },
                 onSettings: { SettingsWindow.open(calendarService: calendarService) }

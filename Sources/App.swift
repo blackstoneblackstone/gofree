@@ -25,13 +25,17 @@ struct GofreeApp: App {
     init() {
         // 启动时套用保存的外观（跟随系统 / 浅色 / 深色）
         AppSettings.apply(AppSettings.shared.appearance)
-        // 调试用：GOFREE_OPEN_ON_LAUNCH=settings / divine，启动即开对应窗口
+        // 启动定时休息提醒调度
+        RestReminderManager.shared.start()
+        // 调试用：GOFREE_OPEN_ON_LAUNCH=settings / divine / rest / rest-popup，启动即开对应窗口
         // （两月视图需要 store，这里拿不到，就不支持了）
         if let target = ProcessInfo.processInfo.environment["GOFREE_OPEN_ON_LAUNCH"] {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 switch target {
                 case "settings": SettingsWindow.open()
                 case "divine": DivinationWindow.open()
+                case "rest": RestWindow.open()
+                case "rest-popup": RestReminderManager.shared.triggerNow(playSound: false)
                 default: break
                 }
             }

@@ -1,5 +1,6 @@
 import Foundation
 import AppKit
+import SceneKit
 import SwiftUI
 
 /// 开发期命令行入口：
@@ -711,6 +712,26 @@ enum Preview {
         ProcessInfo.processInfo.environment["TC_PREVIEW_SETTINGS"] == "1"
     }
 
+    /// TC_PREVIEW_REST=1 时渲染「定时休息」主窗口
+    private static var previewsRest: Bool {
+        ProcessInfo.processInfo.environment["TC_PREVIEW_REST"] == "1"
+    }
+
+    /// TC_PREVIEW_REST_POPUP=1 时渲染右上角定时休息提醒浮窗
+    private static var previewsRestPopup: Bool {
+        ProcessInfo.processInfo.environment["TC_PREVIEW_REST_POPUP"] == "1"
+    }
+
+    /// TC_PREVIEW_REST_ACTIVE=1 时预览正在按步骤休息的倒计时态
+    private static var previewsRestActive: Bool {
+        ProcessInfo.processInfo.environment["TC_PREVIEW_REST_ACTIVE"] == "1"
+    }
+
+    /// TC_PREVIEW_REST_ID 指定预览哪一个休息项
+    private static var previewRestID: String? {
+        ProcessInfo.processInfo.environment["TC_PREVIEW_REST_ID"]
+    }
+
     /// TC_PREVIEW_EXPANDED=1 时渲染「连续两个月」放大视图
     private static var previewsExpanded: Bool {
         ProcessInfo.processInfo.environment["TC_PREVIEW_EXPANDED"] == "1"
@@ -823,6 +844,45 @@ enum Preview {
             )
         }
 
+        if previewsRestPopup {
+            let manager = RestReminderManager.shared
+            let chosen = RestActivity.allItems.first(where: { $0.id == previewRestID })
+                ?? (previewRestID == RestActivity.afternoonEmergency.id ? RestActivity.afternoonEmergency : RestActivity.atDeskItems[0])
+            if previewsRestActive {
+                manager.startBreak(chosen)
+                // 模拟已进行 45 秒（处于第 2 步进行中）
+                manager.previewAdvanceElapsed(seconds: 45)
+            } else {
+                manager.previewSelect(chosen)
+            }
+            return snapshot(
+                AnyView(
+                    RestPopupView(manager: manager)
+                        .padding(12)
+                        .background(Color(nsColor: .windowBackgroundColor))
+                        .environment(\.colorScheme, Preview.darkMode ? .dark : .light)
+                ),
+                width: 376,
+                outputPath: outputPath
+            )
+        }
+
+        if previewsRest {
+            let manager = RestReminderManager.shared
+            let chosen = RestActivity.allItems.first(where: { $0.id == previewRestID })
+                ?? (previewRestID == RestActivity.afternoonEmergency.id ? RestActivity.afternoonEmergency : RestActivity.atDeskItems[0])
+            manager.previewSelect(chosen)
+            return snapshot(
+                AnyView(
+                    RestGuideView(manager: manager, settings: AppSettings.shared)
+                        .frame(width: 448, height: 820)
+                        .environment(\.colorScheme, Preview.darkMode ? .dark : .light)
+                ),
+                width: 448,
+                outputPath: outputPath
+            )
+        }
+
         if previewsSettings {
             return snapshot(
                 AnyView(
@@ -891,7 +951,7 @@ enum Preview {
             defer: false
         )
         window.isReleasedWhenClosed = false
-        window.appearance = NSAppearance(named: .aqua)
+        window.appearance = NSAppearance(named: Preview.darkMode ? .darkAqua : .aqua)
         window.contentView = hosting
         window.setFrameOrigin(NSPoint(x: -20000, y: -20000))
         window.orderFrontRegardless()
@@ -899,8 +959,8 @@ enum Preview {
         hosting.displayIfNeeded()
 
         // 让 onAppear 里的异步数据（美股缓存）和依赖 layout 的浮层稳定下来再截图
-        for _ in 0..<8 {
-            RunLoop.current.run(until: Date().addingTimeInterval(0.03))
+        for _ in 0..<10 {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.04))
             hosting.layoutSubtreeIfNeeded()
             hosting.displayIfNeeded()
         }
@@ -910,6 +970,24 @@ enum Preview {
             return 1
         }
         hosting.cacheDisplay(in: hosting.bounds, to: rep)
+
+        // 把 Metal 渲染的 SCNView（3D 模型）画面合成到位图里，避免 cacheDisplay 抓不到 Metal 层
+        let scnViews = collectSCNViews(in: hosting)
+        if !scnViews.isEmpty, let ctx = NSGraphicsContext(bitmapImageRep: rep) {
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = ctx
+            for scnView in scnViews where !scnView.isHidden && scnView.bounds.width > 1 && scnView.bounds.height > 1 {
+                let snap = scnView.snapshot()
+                let rectInHost = scnView.convert(scnView.bounds, to: hosting)
+                let flippedY = hosting.isFlipped
+                    ? hosting.bounds.height - rectInHost.origin.y - rectInHost.height
+                    : rectInHost.origin.y
+                let drawRect = NSRect(x: rectInHost.origin.x, y: flippedY, width: rectInHost.width, height: rectInHost.height)
+                snap.draw(in: drawRect, from: .zero, operation: .sourceOver, fraction: 1.0)
+            }
+            NSGraphicsContext.restoreGraphicsState()
+        }
+
         window.orderOut(nil)
 
         guard let png = rep.representation(using: .png, properties: [:]) else {
@@ -924,5 +1002,16 @@ enum Preview {
             print("✗ 写入失败：\(error.localizedDescription)")
             return 1
         }
+    }
+
+    private static func collectSCNViews(in root: NSView) -> [SCNView] {
+        var result: [SCNView] = []
+        if let scn = root as? SCNView {
+            result.append(scn)
+        }
+        for sub in root.subviews {
+            result.append(contentsOf: collectSCNViews(in: sub))
+        }
+        return result
     }
 }

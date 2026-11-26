@@ -64,6 +64,8 @@ enum DivinationWindow {
             if candidate === window { continue }
             if SettingsWindow.isSettingsWindow(candidate) { continue }
             if ExpandedWindow.isExpandedWindow(candidate) { continue }
+            if RestWindow.isRestWindow(candidate) { continue }
+            if RestPopupWindow.isPopupWindow(candidate) { continue }
             candidate.orderOut(nil)
         }
     }

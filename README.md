@@ -4,7 +4,7 @@
 
 # gofree
 
-**极简原生的 macOS 菜单栏万年历、美股财经日历与《高岛易断》占卦工具**
+**极简原生的 macOS 菜单栏万年历、美股财经日历、《高岛易断》占卦与 3D 定时休息提醒工具**
 
 [![macOS](https://img.shields.io/badge/macOS-15.0%2B-000000?logo=apple&logoColor=white)](https://github.com/blackstoneblackstone/gofree/releases/latest)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-Native-3B6CF5?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)
@@ -17,7 +17,7 @@
 
 ---
 
-`gofree` 是一款纯原生 SwiftUI 打造的 macOS 菜单栏应用（无 Electron，体积约 2–3 MB，支持浅色 / 深色模式自适应）。点开菜单栏即可一屏看完 **农历黄历、法定休班、实时天气、美股财报与宏观数据**，并内置以 **《高岛易断》** 为核心的「占一事」易占与 AI 解卦功能。
+`gofree` 是一款纯原生 SwiftUI 打造的 macOS 菜单栏应用（无 Electron，支持浅色 / 深色模式自适应）。点开菜单栏即可一屏看完 **农历黄历、法定休班、实时天气、美股财报与宏观数据**，并内置以 **《高岛易断》** 为核心的「占一事」易占与 AI 解卦功能，以及带 **Blender 3D 动作演示与分步倒计时** 的「定时休息提醒」。
 
 <p align="center">
   <img src="design/preview.png" width="320" alt="菜单栏日历预览" />
@@ -51,6 +51,21 @@
 <p align="center">
   <img src="design/preview-divine-casting.png" width="680" alt="起卦过程与 3D 星环动效" />
 </p>
+
+### 4. 定时休息提醒（Blender 3D 动作演示 + 分步引导）
+
+<p align="center">
+  <img src="design/feature-rest-reminder-16x9.png" width="840" alt="定时休息提醒功能介绍" />
+</p>
+
+- **两类共 7+1 套职场友好休息方式**：
+  - **一、留在工位：0 破绽的「隐形休息」**：「托腮/扶额」伪装深思、桌子底下的肌肉松绑（勾脚尖/绷脚背）、戴降噪耳机只听环境音、切去低耗能伪装任务。
+  - **二、离开工位：用「合理借口」彻底断电 3 分钟**：不带手机去洗手间（最管用）、刻意把接水拉长到 3 分钟、借拿快递/接电话去楼梯间伸懒腰或下楼晒太阳。
+  - **下午犯困急救组合**：「不带手机去洗手间闭眼 2 分钟 + 冷水冲手腕」，下午时段（13:00–18:00）自动高亮提示。
+- **8 套 Blender 3D 动作演示（`.usdz`）**：使用 Blender 建模并导出带 120 帧循环关键帧动画的 `.usdz` 微缩 3D 场景，支持鼠标拖拽 360° 旋转查看，浅色 / 深色双主题自适应。
+- **分步倒计时引导**：每项休息拆分为 3 个可执行步骤；点击「开始休息」后，右上角非抢焦点浮窗自动随倒计时推进第 1 → 2 → 3 步，高亮当前步骤进度条与剩余秒数。
+- **智能交替策略与贴心控制**：默认每 45 分钟提醒一次，工位隐形休息与离座断电交替触发（每隔 1–1.5 小时离座断电一次），也可切换仅留在工位 / 仅离开工位；支持电脑休眠唤醒后自动重置计时、仅工作时段（9:00–19:00）、轻柔提示音与 10 分钟稍后提醒。
+- **投屏 / 共享屏幕时不自动弹出**：无需录屏权限即可检测屏幕镜像、AirPlay 投屏、会议软件共享屏幕（飞书 / 腾讯会议 / Zoom / 钉钉 / Teams / 微信）及 Keynote / PowerPoint 全屏演示；投屏期间定时到点自动顺延 5 分钟不弹出，主动打开时仍正常展示。
 
 ## 安装与使用
 
@@ -94,6 +109,13 @@ gofree --llm "年底前跳槽机会怎么样" --seed 12
 # 查询某日美股事件或天气
 gofree --market 2026-11-26
 gofree --weather 杭州 2026-11-26
+
+# 截取定时休息浮窗 / 指南窗口预览图（TC_PREVIEW_DARK=1 切深色模式）
+TC_PREVIEW_REST_POPUP=1 TC_PREVIEW_DARK=0 gofree --preview /tmp/rest-light.png 2026-11 26
+TC_PREVIEW_REST_POPUP=1 TC_PREVIEW_REST_ACTIVE=1 TC_PREVIEW_DARK=1 gofree --preview /tmp/rest-dark.png 2026-11 26
+
+# 使用本机 Blender 重新生成 8 套 .usdz 3D 休息动画模型
+/Applications/Blender.app/Contents/MacOS/Blender --background --python tools/generate_rest_3d.py
 ```
 
 ## 项目结构
@@ -105,14 +127,17 @@ Sources/
 ├── MarketCalendar.swift       # 美股财报、宏观事件、休市与期权到期
 ├── WeatherService.swift       # Open-Meteo 天气与本地缓存
 ├── LLMClient.swift            # OpenAI 兼容模型客户端
+├── RestReminder.swift         # 定时休息调度、分步引导与 7+1 套休息方案
+├── ScreenSharingDetector.swift # 投屏 / 镜像 / 共享屏幕 / 全屏演示检测
 ├── IChing/                    # 起卦引擎、高岛易断解析与切题匹配、AI 提示词
-└── Views/                     # SwiftUI 界面与 3D 透视动效
+└── Views/                     # SwiftUI 界面、SceneKit USDZ 3D 舞台与动效
 Resources/
 ├── iching.json                # 六十四卦《周易》原文与《高岛易断》全本
 ├── Holidays.json              # 中国法定节假日与调休数据
-└── sp500.txt                  # 标普 500 成分股过滤列表
+├── sp500.txt                  # 标普 500 成分股过滤列表
+└── RestModels/                # 8 套 Blender 导出的 3D 动画模型（.usdz）
 Vendor/LunarSwift/             # 内置 MIT 农历算法库
-tools/                         # 构建、调试与 DMG 打包脚本
+tools/                         # 构建、调试、DMG 打包与 Blender 3D 生成脚本
 .github/workflows/release.yml  # 合并 main 自动编译自检并发布 DMG
 ```
 
