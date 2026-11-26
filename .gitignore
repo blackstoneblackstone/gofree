@@ -1,0 +1,13 @@
+# Build outputs & local artifacts
+build/
+.build-dump/
+.build-nav/
+dist/
+DerivedData/
+
+# macOS & Xcode user files
+.DS_Store
+*.xcuserdata/
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
