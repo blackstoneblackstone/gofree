@@ -4,7 +4,7 @@
 
 # gofree
 
-**极简原生的 macOS 菜单栏万年历、美股财经日历、《高岛易断》占卦与 3D 定时休息提醒工具**
+**工作的目的是获得自由 · 原生 macOS 菜单栏万年历、美股财经、《高岛易断》与 3D 定时休息提醒工具**
 
 [![macOS](https://img.shields.io/badge/macOS-15.0%2B-000000?logo=apple&logoColor=white)](https://github.com/blackstoneblackstone/gofree/releases/latest)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-Native-3B6CF5?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)

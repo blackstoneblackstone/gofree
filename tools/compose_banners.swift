@@ -245,39 +245,26 @@ func renderFeatureBanner(_ spec: BannerSpec) {
 
 func renderHeroBanner(projectRoot: String, shotsDir: String) {
     let (rep, cg) = makeBitmapContext()
-    drawBackdrop(cg: cg, accentA: rgba(43, 98, 245), accentB: rgba(15, 112, 72))
+    drawBackdrop(cg: cg, accentA: rgba(14, 116, 168), accentB: rgba(218, 146, 36))
 
-    // 顶部左侧：App 图标 + gofree 主标题与定位
+    // 顶部左侧：新「日出之门」App 图标 + gofree 主标题与品牌理念
     let iconPath = "\(projectRoot)/design/icon-1024.png"
     if let icon = NSImage(contentsOfFile: iconPath) {
-        let iconRect = NSRect(x: 92, y: H - 180, width: 88, height: 88)
-        let p = NSBezierPath(roundedRect: iconRect, xRadius: 20, yRadius: 20)
-        cg.saveGState()
-        let sh = NSShadow()
-        sh.shadowColor = NSColor(white: 0, alpha: 0.14)
-        sh.shadowOffset = NSSize(width: 0, height: -8)
-        sh.shadowBlurRadius = 18
-        sh.set()
-        NSColor.white.setFill()
-        p.fill()
-        cg.restoreGState()
-        cg.saveGState()
-        p.addClip()
+        let iconRect = NSRect(x: 84, y: H - 186, width: 102, height: 102)
         icon.draw(in: iconRect)
-        cg.restoreGState()
     }
 
     let brandFont = NSFont(name: "PingFangSC-Semibold", size: 52) ?? .systemFont(ofSize: 52, weight: .bold)
     let tagFont = NSFont(name: "PingFangSC-Regular", size: 24) ?? .systemFont(ofSize: 24, weight: .regular)
-    drawText("gofree", at: CGPoint(x: 202, y: H - 142), font: brandFont, color: rgba(20, 24, 34))
-    drawText("原生 macOS 菜单栏 · 万年历黄历 · 美股财经 · 高岛易断 · 3D 定时休息", at: CGPoint(x: 202, y: H - 178), font: tagFont, color: rgba(78, 86, 104))
+    drawText("gofree", at: CGPoint(x: 202, y: H - 142), font: brandFont, color: rgba(16, 28, 38))
+    drawText("工作的目的是获得自由 · 原生 macOS 菜单栏日历 / 美股 / 易断 / 3D 定时休息", at: CGPoint(x: 202, y: H - 178), font: tagFont, color: rgba(74, 96, 114))
 
-    // 四枚小胶囊特性标
+    // 四枚小胶囊特性标（海天青蓝 × 晨曦暖金）
     let pills = [
-        ("calendar", "离线万年历", rgba(43, 98, 245)),
-        ("chart.line.uptrend.xyaxis", "美股 S&P 500", rgba(186, 114, 18)),
-        ("sparkles", "Blender 3D 占卦", rgba(92, 78, 232)),
-        ("cup.and.saucer.fill", "3D 分步定时休息", rgba(15, 112, 72))
+        ("calendar", "离线万年历", rgba(14, 116, 168)),
+        ("chart.line.uptrend.xyaxis", "美股 S&P 500", rgba(186, 112, 16)),
+        ("sparkles", "Blender 3D 占卦", rgba(20, 112, 152)),
+        ("cup.and.saucer.fill", "3D 分步定时休息", rgba(14, 124, 102))
     ]
     var px: CGFloat = 92
     let pFont = NSFont(name: "PingFangSC-Medium", size: 19) ?? .systemFont(ofSize: 19, weight: .medium)
@@ -351,11 +338,11 @@ func savePNG(_ rep: NSBitmapImageRep, to path: String) {
 let shotsDir = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "/tmp"
 let projectRoot = FileManager.default.currentDirectoryPath
 
-let indigo = rgba(43, 98, 245)
-let jade = rgba(15, 112, 72)
-let amber = rgba(196, 118, 16)
-let crimson = rgba(196, 52, 42)
-let violet = rgba(102, 74, 232)
+let indigo = rgba(14, 116, 168)    // 海天青蓝
+let jade = rgba(14, 124, 102)      // 海风青翠
+let amber = rgba(196, 122, 18)     // 晨曦暖金
+let crimson = rgba(202, 68, 54)    // 朝霞珊瑚
+let violet = rgba(22, 104, 156)    // 深海湛蓝
 
 // 0. 顶部总览 Hero 16:9
 renderHeroBanner(projectRoot: projectRoot, shotsDir: shotsDir)
