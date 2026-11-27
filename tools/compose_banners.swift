@@ -65,20 +65,20 @@ func makeBitmapContext() -> (NSBitmapImageRep, CGContext) {
 
 func drawBackdrop(cg: CGContext, accentA: NSColor, accentB: NSColor) {
     let cs = CGColorSpaceCreateDeviceRGB()
-    // 柔雾白底色线性渐变
+    // 奶白工业风柔暖渐变底色（与 ESC 键帽质感呼应）
     let baseColors = [
-        rgba(244, 247, 253).cgColor,
-        rgba(248, 250, 255).cgColor,
-        rgba(239, 245, 252).cgColor
+        rgba(250, 248, 244).cgColor,
+        rgba(247, 245, 249).cgColor,
+        rgba(244, 248, 243).cgColor
     ] as CFArray
     if let grad = CGGradient(colorsSpace: cs, colors: baseColors, locations: [0, 0.5, 1]) {
         cg.drawLinearGradient(grad, start: CGPoint(x: 0, y: H), end: CGPoint(x: W, y: 0), options: [])
     }
 
-    // 三个柔和氛围光斑（Apple Keynote 质感）
+    // 三个年轻电光氛围光斑
     let blobs: [(CGPoint, CGFloat, NSColor, CGFloat)] = [
-        (CGPoint(x: 260, y: H - 160), 620, accentA, 0.16),
-        (CGPoint(x: W - 240, y: H - 220), 680, accentB, 0.18),
+        (CGPoint(x: 260, y: H - 160), 620, accentA, 0.17),
+        (CGPoint(x: W - 240, y: H - 220), 680, accentB, 0.20),
         (CGPoint(x: W - 460, y: 180), 640, accentA, 0.14)
     ]
     for (center, radius, color, alpha) in blobs {
@@ -245,9 +245,9 @@ func renderFeatureBanner(_ spec: BannerSpec) {
 
 func renderHeroBanner(projectRoot: String, shotsDir: String) {
     let (rep, cg) = makeBitmapContext()
-    drawBackdrop(cg: cg, accentA: rgba(14, 116, 168), accentB: rgba(218, 146, 36))
+    drawBackdrop(cg: cg, accentA: rgba(236, 78, 22), accentB: rgba(132, 226, 48))
 
-    // 顶部左侧：新「日出之门」App 图标 + gofree 主标题与品牌理念
+    // 顶部左侧：长翅膀 ESC App 图标 + gofree 主标题与品牌理念
     let iconPath = "\(projectRoot)/design/icon-1024.png"
     if let icon = NSImage(contentsOfFile: iconPath) {
         let iconRect = NSRect(x: 84, y: H - 186, width: 102, height: 102)
@@ -256,15 +256,15 @@ func renderHeroBanner(projectRoot: String, shotsDir: String) {
 
     let brandFont = NSFont(name: "PingFangSC-Semibold", size: 52) ?? .systemFont(ofSize: 52, weight: .bold)
     let tagFont = NSFont(name: "PingFangSC-Regular", size: 24) ?? .systemFont(ofSize: 24, weight: .regular)
-    drawText("gofree", at: CGPoint(x: 202, y: H - 142), font: brandFont, color: rgba(16, 28, 38))
-    drawText("工作的目的是获得自由 · 原生 macOS 菜单栏日历 / 美股 / 易断 / 3D 定时休息", at: CGPoint(x: 202, y: H - 178), font: tagFont, color: rgba(74, 96, 114))
+    drawText("gofree", at: CGPoint(x: 202, y: H - 142), font: brandFont, color: rgba(24, 20, 30))
+    drawText("工作的目的是获得自由 · 原生 macOS 菜单栏日历 / 美股 / 易断 / 3D 定时休息", at: CGPoint(x: 202, y: H - 178), font: tagFont, color: rgba(92, 86, 102))
 
-    // 四枚小胶囊特性标（海天青蓝 × 晨曦暖金）
+    // 四枚小胶囊特性标（电光橙 × 荧光青柠 × 电光紫）
     let pills = [
-        ("calendar", "离线万年历", rgba(14, 116, 168)),
-        ("chart.line.uptrend.xyaxis", "美股 S&P 500", rgba(186, 112, 16)),
-        ("sparkles", "Blender 3D 占卦", rgba(20, 112, 152)),
-        ("cup.and.saucer.fill", "3D 分步定时休息", rgba(14, 124, 102))
+        ("calendar", "离线万年历", rgba(236, 78, 22)),
+        ("chart.line.uptrend.xyaxis", "美股 S&P 500", rgba(196, 116, 8)),
+        ("sparkles", "Blender 3D 占卦", rgba(104, 78, 226)),
+        ("cup.and.saucer.fill", "3D 分步定时休息", rgba(42, 142, 52))
     ]
     var px: CGFloat = 92
     let pFont = NSFont(name: "PingFangSC-Medium", size: 19) ?? .systemFont(ofSize: 19, weight: .medium)
@@ -338,11 +338,11 @@ func savePNG(_ rep: NSBitmapImageRep, to path: String) {
 let shotsDir = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : "/tmp"
 let projectRoot = FileManager.default.currentDirectoryPath
 
-let indigo = rgba(14, 116, 168)    // 海天青蓝
-let jade = rgba(14, 124, 102)      // 海风青翠
-let amber = rgba(196, 122, 18)     // 晨曦暖金
-let crimson = rgba(202, 68, 54)    // 朝霞珊瑚
-let violet = rgba(22, 104, 156)    // 深海湛蓝
+let indigo = rgba(236, 78, 22)     // 电光活力橙
+let jade = rgba(42, 142, 52)       // 荧光青柠绿
+let amber = rgba(196, 116, 8)      // 高能电光黄
+let crimson = rgba(216, 46, 68)    // 潮酷绯红
+let violet = rgba(104, 78, 226)    // 潮酷电光紫
 
 // 0. 顶部总览 Hero 16:9
 renderHeroBanner(projectRoot: projectRoot, shotsDir: shotsDir)
